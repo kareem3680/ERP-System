@@ -23,7 +23,7 @@ const notificationSchema = new mongoose.Schema(
     },
     from: {
       type: String,
-      default: "System",
+      default: "system",
     },
     toRole: {
       type: String,

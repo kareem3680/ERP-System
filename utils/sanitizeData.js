@@ -383,3 +383,108 @@ exports.sanitizeNotification = (n) =>
     ["createdAt", (n) => n.createdAt],
     ["updatedAt", (n) => n.updatedAt],
   ]);
+
+exports.sanitizeClient = (client) =>
+  sanitizeObject(client, [
+    ["id", (c) => c._id],
+    ["name", (c) => c.name],
+    ["email", (c) => c.email],
+    ["phone", (c) => c.phone],
+    ["company", (c) => c.company],
+    ["address", (c) => c.address],
+    ["notes", (c) => c.notes],
+    [
+      "assignedTo",
+      (c) =>
+        typeof c.assignedTo === "object"
+          ? sanitizeObject(c.assignedTo, [
+              ["id", (u) => u._id],
+              ["name", (u) => u.name],
+              ["email", (u) => u.email],
+            ])
+          : c.assignedTo,
+    ],
+    ["createdAt", (c) => c.createdAt],
+    ["updatedAt", (c) => c.updatedAt],
+  ]);
+
+exports.sanitizeProject = (project) =>
+  sanitizeObject(project, [
+    ["id", (p) => p._id],
+    ["title", (p) => p.title],
+    ["description", (p) => p.description],
+    ["status", (p) => p.status],
+    ["startDate", (p) => p.startDate],
+    ["endDate", (p) => p.endDate],
+    [
+      "client",
+      (p) => (p.client ? exports.sanitizeClient(p.client) : undefined),
+    ],
+    [
+      "assignedTo",
+      (p) =>
+        Array.isArray(p.assignedTo)
+          ? p.assignedTo.map((user) =>
+              sanitizeObject(user, [
+                ["id", (u) => u._id],
+                ["name", (u) => u.name],
+              ])
+            )
+          : undefined,
+    ],
+    [
+      "createdBy",
+      (p) =>
+        p.createdBy
+          ? sanitizeObject(p.createdBy, [
+              ["id", (u) => u._id],
+              ["name", (u) => u.name],
+            ])
+          : undefined,
+    ],
+    ["createdAt", (p) => p.createdAt],
+    ["updatedAt", (p) => p.updatedAt],
+  ]);
+
+exports.sanitizeTask = (task) =>
+  sanitizeObject(task, [
+    ["id", (t) => t._id],
+    ["title", (t) => t.title],
+    ["description", (t) => t.description],
+    ["status", (t) => t.status],
+    ["priority", (t) => t.priority],
+    ["dueDate", (t) => t.dueDate],
+    [
+      "assignedTo",
+      (t) =>
+        t.assignedTo
+          ? sanitizeObject(t.assignedTo, [
+              ["id", (u) => u._id],
+              ["name", (u) => u.name],
+              ["email", (u) => u.email],
+            ])
+          : undefined,
+    ],
+    [
+      "project",
+      (t) =>
+        t.project
+          ? sanitizeObject(t.project, [
+              ["id", (p) => p._id],
+              ["title", (p) => p.title],
+            ])
+          : undefined,
+    ],
+    [
+      "createdBy",
+      (t) =>
+        t.createdBy
+          ? sanitizeObject(t.createdBy, [
+              ["id", (u) => u._id],
+              ["name", (u) => u.name],
+            ])
+          : undefined,
+    ],
+    ["createdAt", (t) => t.createdAt],
+    ["updatedAt", (t) => t.updatedAt],
+  ]);

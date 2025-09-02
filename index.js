@@ -24,6 +24,7 @@ const mountRoutesECommerce = require("./modules/e-commerce/routes");
 const mountRoutesWms = require("./modules/wms/routes");
 const mountRoutesTransaction = require("./modules/transactions/routes");
 const mountRoutesNotifications = require("./modules/notifications/routes");
+const mountRoutesCrm = require("./modules/crm/routes");
 
 // Application
 dotenv.config({ path: "config.env" });
@@ -79,6 +80,7 @@ mountRoutesECommerce(app);
 mountRoutesWms(app);
 mountRoutesTransaction(app);
 mountRoutesNotifications(app);
+mountRoutesCrm(app);
 
 // Handle unmatched routes
 app.use((req, res, next) => {

@@ -13,11 +13,9 @@ const settingService = require("./settingService");
 const ApiError = require("../../../utils/apiError");
 const sanitize = require("../../../utils/sanitizeData");
 const { cacheWrapper, delCache } = require("../../../utils/cache");
-
 const {
   createAndSendNotificationService,
 } = require("../../notifications/services/notificationService");
-
 const {
   getAllService,
   deleteService,
