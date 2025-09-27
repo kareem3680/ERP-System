@@ -4,10 +4,8 @@ const winston = require("winston");
 
 const dateFormat = () => new Date().toLocaleString();
 
-const isProd = process.env.NODE_ENV === "production";
-
 const baseLogDir = process.env.LOG_PATH || "logs";
-const logDir = isProd ? "/tmp/logs" : path.resolve(__dirname, "..", baseLogDir);
+const logDir = path.resolve(__dirname, "..", baseLogDir);
 
 try {
   fs.mkdirSync(logDir, { recursive: true });
@@ -21,11 +19,10 @@ class loggerServices {
   constructor(topic) {
     const filename = path.join(logDir, `${topic}.log`);
 
-    const transports = [new winston.transports.Console()];
-
-    if (!isProd || (isProd && fs.existsSync("/tmp"))) {
-      transports.push(new winston.transports.File({ filename }));
-    }
+    const transports = [
+      new winston.transports.Console(),
+      new winston.transports.File({ filename }),
+    ];
 
     this.logger = winston.createLogger({
       level: process.env.LOG_LEVEL || "info",

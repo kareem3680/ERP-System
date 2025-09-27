@@ -44,7 +44,7 @@ New order has been created.
 
 Order ID: ${order._id}
 Customer: ${user.email}
-Total Price: ${order.totalOrderPrice} EGP
+Total Price: ${order.totalOrderPrice} AED
 Payment Method: ${order.paymentMethod || "Not specified"}
 Status: ${order.status}
 
@@ -93,7 +93,7 @@ const createStripeCreditOrderService = async (session) => {
     await logger.info("Stripe order completed", {
       orderId: order._id,
       customer: user.email,
-      total: totalOrderPrice,
+      total: order.totalOrderPrice,
     });
     return { order, user };
   } catch (error) {
@@ -156,7 +156,7 @@ const createPayMobCreditOrderService = async (paymentData) => {
     await logger.info("Paymob order completed", {
       orderId: order._id,
       customer: user.email,
-      total: totalOrderPrice,
+      total: order.totalOrderPrice,
     });
 
     return { order, user };
@@ -220,7 +220,7 @@ exports.createStripeSessionService = asyncHandler(async (req, user, cartId) => {
     line_items: [
       {
         price_data: {
-          currency: "egp",
+          currency: "aed",
           product_data: { name: user.name },
           unit_amount: Math.round(total * 100),
         },
@@ -281,13 +281,13 @@ exports.stripeWebhookCheckoutService = asyncHandler(async (req) => {
         await delCache("orders:all*");
         await delCache(`order:${order._id}`);
 
-        await delCache(`cart:${userId}`);
+        await delCache(`cart:${user._id}`);
         await delCache(`cart:all*`);
 
         logger.info("Order created from Stripe session.");
 
         await createAndSendNotificationService({
-          title: `New Order #${newOrder.orderNumber}`,
+          title: `New Order #${order.orderNumber}`,
           message: `User ${user.name} placed a new order`,
           module: "order",
           importance: "high",
@@ -317,6 +317,7 @@ exports.stripeWebhookCheckoutService = asyncHandler(async (req) => {
 });
 
 exports.createPayMobSessionService = asyncHandler(async (req, user, cartId) => {
+  aed;
   const { PAYMOB_API_KEY, PAYMOB_INTEGRATION_ID, PAYMOB_IFRAME_ID } =
     process.env;
 
@@ -402,7 +403,7 @@ exports.payMobWebhookCheckoutService = asyncHandler(async (event) => {
       await delCache("orders:all*");
       await delCache(`order:${order._id}`);
 
-      await delCache(`cart:${userId}`);
+      await delCache(`cart:${user._id}`);
       await delCache(`cart:all*`);
 
       logger.info(`Payment successful for Order ID ${paymentData.order.id}`, {
@@ -410,7 +411,7 @@ exports.payMobWebhookCheckoutService = asyncHandler(async (event) => {
       });
 
       await createAndSendNotificationService({
-        title: `New Order #${newOrder.orderNumber}`,
+        title: `New Order #${order.orderNumber}`,
         message: `User ${user.name} placed a new order`,
         module: "order",
         importance: "high",
