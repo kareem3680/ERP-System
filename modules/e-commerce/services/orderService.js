@@ -198,13 +198,13 @@ exports.createCashOrderService = asyncHandler(async (userId, cartId) => {
   await delCache(`cart:all*`);
 
   await logger.info("Cash order created", { orderId: order._id });
-  await createAndSendNotificationService({
-    title: `New Order #${order.orderNumber}`,
-    message: `User ${user.name} placed a new order`,
-    module: "order",
-    importance: "high",
-    from: user.name,
-  });
+  // await createAndSendNotificationService({
+  //   title: `New Order #${order.orderNumber}`,
+  //   message: `User ${user.name} placed a new order`,
+  //   module: "order",
+  //   importance: "high",
+  //   from: user.name,
+  // });
   await notifyModeratorsAboutOrder(order, user);
   return sanitize.sanitizeOrder(order);
 });
@@ -252,7 +252,7 @@ exports.stripeWebhookCheckoutService = asyncHandler(async (req) => {
   if (!endpointSecret) {
     logger.error("STRIPE_WEBHOOK_SECRET_KEY is not defined.");
     throw new Error(
-      "🛑 Webhook secret key is missing. Cannot verify Stripe signature."
+      "🛑 Webhook secret key is missing. Cannot verify Stripe signature.",
     );
   }
 
@@ -332,7 +332,7 @@ exports.createPayMobSessionService = asyncHandler(async (req, user, cartId) => {
       "https://accept.paymob.com/api/auth/tokens",
       {
         api_key: PAYMOB_API_KEY,
-      }
+      },
     );
     const token = authRes.data.token;
 
@@ -344,7 +344,7 @@ exports.createPayMobSessionService = asyncHandler(async (req, user, cartId) => {
         amount_cents: (totalOrderPrice * 100).toString(),
         currency: "EGP",
         items: [],
-      }
+      },
     );
     const orderId = orderRes.data.id;
 
@@ -375,7 +375,7 @@ exports.createPayMobSessionService = asyncHandler(async (req, user, cartId) => {
         },
         currency: "EGP",
         integration_id: PAYMOB_INTEGRATION_ID,
-      }
+      },
     );
 
     const paymentToken = paymentKeyRes.data.token;

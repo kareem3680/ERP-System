@@ -1,2 +1,6 @@
 2/22/2026, 11:49:48 PM | INFO | Verification email sent | {"email":"kareem3680@gmail.com"}
 2/23/2026, 12:30:12 AM | INFO | User registered successfully | {"email":"admin@test.com"}
+2/23/2026, 1:34:53 AM | INFO | Token verified successfully | {"userId":"699b83745be7d7837e9952f5"}
+2/23/2026, 1:34:58 AM | INFO | User logged in successfully | {"email":"user@test.com"}
+2/23/2026, 1:35:00 AM | INFO | Token verified successfully | {"userId":"699b83f961df5cdbbc74a79f"}
+2/23/2026, 1:35:34 AM | INFO | Token verified successfully | {"userId":"699b83f961df5cdbbc74a79f"}

@@ -1,0 +1,2 @@
+2/23/2026, 1:35:34 AM | INFO | Cache MISS: orders:all:{}
+2/23/2026, 1:35:34 AM | INFO | Cache SET: orders:all:{} (TTL: 3600s)
