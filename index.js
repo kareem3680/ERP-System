@@ -30,11 +30,11 @@ const mountRoutesCrm = require("./modules/crm/routes");
 dotenv.config({ path: "config.env" });
 const app = express();
 
-//WebHook
+// WebHook
 app.post(
   "/stripe-webhook-checkout",
   express.raw({ type: "application/json" }),
-  controller.stripeWebhookCheckout
+  controller.stripeWebhookCheckout,
 );
 
 // Middlewares
@@ -55,6 +55,7 @@ app.use((req, res, next) => {
 app.use(hpp());
 app.use(compression());
 app.use(express.static(path.join(__dirname, "uploads")));
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -90,23 +91,36 @@ app.use((req, res, next) => {
 // Handle Errors In Express
 app.use(globalError);
 
-// Server
-const PORT = process.env.PORT || 8000;
-const MODE = process.env.NODE_ENV;
-const server = app.listen(PORT, async () => {
-  console.log(`🟢 Mode Is: ${MODE}\n🟢 Server is running on port: ${PORT}`);
-  await dbConnection();
-  await connectRedis();
-});
+// 🔥 Important: Initialize connections before exporting (Vercel Serverless)
+let isInitialized = false;
 
-// Initialize Socket.io
-Socket.initSocket(server);
+const initApp = async () => {
+  if (isInitialized) return;
+  try {
+    await dbConnection();
+    await connectRedis();
+    isInitialized = true;
+    console.log("🚀 App initialized with DB & Redis");
+  } catch (err) {
+    console.error("🔴 Initialization failed:", err);
+    throw err;
+  }
+};
 
-// Handle Rejections Outside Express
-process.on("unhandledRejection", (err) => {
-  console.error(`🔴 Unhandled Rejection Errors : ${err.name} | ${err.message}`);
-  server.close(() => {
-    console.log(`🔴 Shutting down ....`);
-    process.exit(1);
+// Initialize once
+initApp();
+
+// Optional: If running locally (not on Vercel)
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 8000;
+  const server = app.listen(PORT, () => {
+    console.log(
+      `🟢 Mode Is: ${process.env.NODE_ENV}\n🟢 Server is running on port: ${PORT}`,
+    );
   });
-});
+
+  Socket.initSocket(server);
+}
+
+// Export app for Vercel
+module.exports = app;
