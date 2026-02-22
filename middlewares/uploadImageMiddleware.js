@@ -12,7 +12,7 @@ const multerOptions = () => {
     } else {
       cb(
         new APiError("🛑 Not an image! Please upload only images.", 400),
-        false
+        false,
       );
     }
   };
