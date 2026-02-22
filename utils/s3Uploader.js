@@ -1,12 +1,8 @@
-import { v2 as cloudinary } from "cloudinary";
-import dotenv from "dotenv";
-import { v4 as uuidv4 } from "uuid";
+const { v2: cloudinary } = require("cloudinary");
+const { v4: uuidv4 } = require("uuid");
+require("dotenv").config({ path: "config.env", quiet: true });
 
-dotenv.config({ path: "config.env", quiet: true });
-
-// ========================
-// Cloudinary Configuration
-// ========================
+// Initialize Cloudinary once (global client)
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -15,14 +11,14 @@ cloudinary.config({
 });
 
 /**
- * Upload buffer to Cloudinary
+ * Upload buffer to Cloudinary (Same signature as S3)
  * @param {Buffer} buffer - File buffer
  * @param {String} filename - The filename to save as
  * @param {String} folder - Folder inside Cloudinary
  * @param {String} contentType - MIME type (default: image/jpeg)
  * @returns {String} - Public Cloudinary URL
  */
-const uploadToCloudinary = async (
+const uploadToS3 = async (
   buffer,
   filename,
   folder,
@@ -34,7 +30,7 @@ const uploadToCloudinary = async (
 
   const publicId = `${folder}/${uuidv4()}-${filename}`;
 
-  return new Promise((resolve, reject) => {
+  const result = await new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
         public_id: publicId,
@@ -47,12 +43,14 @@ const uploadToCloudinary = async (
       },
       (error, result) => {
         if (error) return reject(error);
-        resolve(result.secure_url);
+        resolve(result);
       },
     );
 
     stream.end(buffer);
   });
+
+  return result.secure_url;
 };
 
-export default uploadToCloudinary;
+module.exports = uploadToS3;
