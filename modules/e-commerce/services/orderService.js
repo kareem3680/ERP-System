@@ -317,7 +317,6 @@ exports.stripeWebhookCheckoutService = asyncHandler(async (req) => {
 });
 
 exports.createPayMobSessionService = asyncHandler(async (req, user, cartId) => {
-  aed;
   const { PAYMOB_API_KEY, PAYMOB_INTEGRATION_ID, PAYMOB_IFRAME_ID } =
     process.env;
 
