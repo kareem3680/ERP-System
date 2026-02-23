@@ -84,8 +84,10 @@ mountRoutesNotifications(app);
 mountRoutesCrm(app);
 
 // Handle unmatched routes
-app.use((req, res, next) => {
-  next(new ApiError(`🛑 Can not find this route: ${req.originalUrl}`, 400));
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Welcome to ERP Back-End API",
+  });
 });
 
 // Handle Errors In Express
