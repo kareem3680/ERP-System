@@ -68,10 +68,9 @@ exports.signUpWithGoogleService = asyncHandler(async (idToken) => {
   let user = await userModel.findOne({ email });
 
   if (user && !user.googleId) {
-    throw new ApiError(
-      "🛑 Email already used with password. Please login manually.",
-      400
-    );
+    user.googleId = googleId;
+    await user.save();
+    await logger.info("Linked existing user with Google", { email });
   }
 
   if (!user) {
@@ -101,7 +100,7 @@ exports.loginUser = asyncHandler(async (email, password) => {
     await logger.error("Login failed - account deactivated", { email });
     throw new ApiError(
       "🛑 Your account has been deactivated. Please contact support.",
-      403
+      403,
     );
   }
 
@@ -181,11 +180,11 @@ exports.checkAuth = asyncHandler(async (decodedToken) => {
         "Token invalid - password changed after token issued",
         {
           userId: user._id,
-        }
+        },
       );
       throw new ApiError(
         "🛑 Password changed recently. Please login again.",
-        401
+        401,
       );
     }
   }
