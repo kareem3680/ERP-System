@@ -100,7 +100,7 @@ const initApp = async () => {
   if (isInitialized) return;
   try {
     await dbConnection();
-    await connectRedis();
+    // await connectRedis();
     isInitialized = true;
     console.log("🚀 App initialized with DB & Redis");
   } catch (err) {
