@@ -40,7 +40,7 @@ app.post(
 // Middlewares
 app.use(express.json({ limit: "350kb" }));
 app.set("trust proxy", 1);
-app.use(cors());
+app.use(cors({ origin: "*" }));
 
 // Security Middlewares
 app.use(helmet());
